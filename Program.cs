@@ -37,22 +37,30 @@ namespace App
     {
         public static ValidationPipelineBuilder ApplyMastercardValidations(this ValidationPipelineBuilder builder)
         {
-            return builder.Apply(async (context, next) =>
+            return builder
+            .Apply(async (context, next) =>
             {
                 Console.WriteLine("Iniciando validação");
                 await next();
                 Console.WriteLine("Validação concluida");
-
-            }).Apply(async (context, next) =>
+            })
+            .Apply(async (context, next) =>
             {
                 Console.WriteLine("one");
                 await next();
-            }).Apply(async (context, next) =>
+            })
+            .Apply("validateMastercardCvc", async (context, next) =>
+            {
+                Console.WriteLine("validateMastercardCvc skip test");
+                await next();
+            })
+            .Apply(async (context, next) =>
             {
                 Console.WriteLine("two");
 
                 await next();
-            }).Apply(async (context, next) =>
+            })
+            .Apply(async (context, next) =>
             {
                 Console.WriteLine("three");
                 await next();
