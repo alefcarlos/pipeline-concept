@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -16,6 +17,30 @@ namespace App
                     return middleware(context, simpleNext);
                 };
             });
+        }
+        public static ValidationPipelineBuilder UseExceptionHandler(this ValidationPipelineBuilder builder)
+        {
+            return builder.Apply(async (context, next) =>
+             {
+                 var loggerFactory = context.Services.GetRequiredService<ILoggerFactory>();
+                 var logger = loggerFactory.CreateLogger("ValidationEngine");
+
+                 logger.LogInformation("Iniciando validação");
+
+                 try
+                 {
+                     await next();
+                 }
+                 catch (Exception ex)
+                 {
+                     logger.LogError(ex, "Uma expcetion não tratada ocorreu.");
+                     context.SetError(EValidationError.UnhandledException);
+                 }
+                 finally
+                 {
+                     logger.LogInformation("Validação concluida");
+                 }
+             });
         }
 
         //public static ValidationPipelineBuilder Apply(this ValidationPipelineBuilder builder, string validationName, Func<ValidationContext, Func<Task>, Task> middleware)

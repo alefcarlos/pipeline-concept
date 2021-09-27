@@ -64,7 +64,6 @@ namespace App
         public override Task<bool> ValidateAsync(ValidationContext context)
         {
             throw new NotImplementedException();
-            return Task.FromResult(true);
         }
     }
 
@@ -74,31 +73,11 @@ namespace App
         public static ValidationPipelineBuilder ApplyMastercardValidations(this ValidationPipelineBuilder builder)
         {
             return builder
-            .Apply(async (context, next) =>
-            {
-                var loggerFactory = context.Services.GetRequiredService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger("ValidationEngine");
-
-                logger.LogInformation("Iniciando validação");
-
-                try
-                {
-                    await next();
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Uma expcetion não tratada ocorreu.");
-                    context.SetError(EValidationError.UnhandledException);
-                }
-                finally
-                {
-                    logger.LogInformation("Validação concluida");
-                }
-            })
-            .Apply<ValidationA>()
-            .Apply<ValidationB>()
-            .Apply<ValidateInternationalTransaction>()
-            .ApplyCvc();
+                .UseExceptionHandler()
+                .Apply<ValidationA>()
+                .Apply<ValidationB>()
+                .Apply<ValidateInternationalTransaction>()
+                .ApplyCvc();
         }
 
         public static ValidationPipelineBuilder ApplyCvc(this ValidationPipelineBuilder builder)
