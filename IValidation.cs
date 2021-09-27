@@ -18,16 +18,18 @@ namespace App
             this.logger = logger;
         }
 
-        protected virtual bool ShouldApply(ValidationContext context)
+        protected virtual bool ShouldSkip(ValidationContext context)
         {
-            return !context.SkipedValidations.Contains(GetType().Name);
+            context.TryParameterValueAs($"{GetType().Name}_skip", out bool skip);
+
+            return skip;
         }
 
         public async Task InvokeAsync(ValidationContext context, ValidationDelegate next)
         {
             using (logger.BeginScope("Executando regra {ValidationName}", GetType().Name))
             {
-                if (!ShouldApply(context))
+                if (ShouldSkip(context))
                 {
                     logger.LogWarning("Validation skiped");
                 }

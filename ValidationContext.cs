@@ -26,12 +26,6 @@ namespace App
             Message = message;
         }
 
-        public List<string> SkipedValidations { get; set; } = new List<string>
-        {
-            "validateMastercardCvc",
-            "ValidationA"
-        };
-
         public Dictionary<string, string> Parameters { get; private set; }
 
         public void SetParameters(Dictionary<string, string> parameters){
@@ -46,6 +40,19 @@ namespace App
                 return (T)Enum.Parse(typeof(T), value);
 
             return (T)Convert.ChangeType(value, typeof(T));
+        }
+
+        public bool TryParameterValueAs<T>(string key, out T value)
+        {
+            if (Parameters.ContainsKey(key))
+            {
+                value = ParameterValueAs<T>(key);
+                return true;
+
+            }
+
+            value = default;
+            return false;
         }
     }
 }
