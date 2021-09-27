@@ -1,0 +1,16 @@
+C:\repos\github.com\alefcarlos\pipeline-concept\App\bin\Debug\netcoreapp3.1\App.exe
+C:\repos\github.com\alefcarlos\pipeline-concept\App\bin\Debug\netcoreapp3.1\App.deps.json
+C:\repos\github.com\alefcarlos\pipeline-concept\App\bin\Debug\netcoreapp3.1\App.runtimeconfig.json
+C:\repos\github.com\alefcarlos\pipeline-concept\App\bin\Debug\netcoreapp3.1\App.runtimeconfig.dev.json
+C:\repos\github.com\alefcarlos\pipeline-concept\App\bin\Debug\netcoreapp3.1\App.dll
+C:\repos\github.com\alefcarlos\pipeline-concept\App\bin\Debug\netcoreapp3.1\App.pdb
+C:\repos\github.com\alefcarlos\pipeline-concept\App\obj\Debug\netcoreapp3.1\App.csproj.AssemblyReference.cache
+C:\repos\github.com\alefcarlos\pipeline-concept\App\obj\Debug\netcoreapp3.1\App.GeneratedMSBuildEditorConfig.editorconfig
+C:\repos\github.com\alefcarlos\pipeline-concept\App\obj\Debug\netcoreapp3.1\App.AssemblyInfoInputs.cache
+C:\repos\github.com\alefcarlos\pipeline-concept\App\obj\Debug\netcoreapp3.1\App.AssemblyInfo.cs
+C:\repos\github.com\alefcarlos\pipeline-concept\App\obj\Debug\netcoreapp3.1\App.csproj.CoreCompileInputs.cache
+C:\repos\github.com\alefcarlos\pipeline-concept\App\obj\Debug\netcoreapp3.1\App.dll
+C:\repos\github.com\alefcarlos\pipeline-concept\App\obj\Debug\netcoreapp3.1\App.pdb
+C:\repos\github.com\alefcarlos\pipeline-concept\App\obj\Debug\netcoreapp3.1\App.genruntimeconfig.cache
+C:\repos\github.com\alefcarlos\pipeline-concept\App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+C:\repos\github.com\alefcarlos\pipeline-concept\App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
