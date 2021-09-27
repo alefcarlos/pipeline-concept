@@ -4,6 +4,7 @@
     {
         InvalidCvc,
         InternationalTransactionNotAllowedForThisCountry,
-        InternationalTransactionNotAllowedForDomesticCard
+        InternationalTransactionNotAllowedForDomesticCard,
+        UnhandledException
     }
 }

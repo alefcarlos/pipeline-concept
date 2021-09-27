@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace App
 {
@@ -11,13 +13,15 @@ namespace App
             var services = new ServiceCollection();
             services.AddScoped<IValidationFactory, ValidationFactory>();
             services.AddSingleton<ValidateInternationalTransaction>();
+            services.AddSingleton<ValidationA>();
+            services.AddSingleton<ValidationB>();
+            services.AddLogging(opt => opt.AddConsole(configure => configure.IncludeScopes = true));
 
             using var provider = services.BuildServiceProvider();
 
             var builder = new ValidationPipelineBuilder();
             builder = builder.ApplyMastercardValidations();
             var pipe = builder.Build();
-
 
             var context = new ValidationContext(provider);
 
@@ -36,6 +40,32 @@ namespace App
         }
     }
 
+    public class ValidationA : ValidationBase
+    {
+        public ValidationA(ILogger<ValidationA> logger) : base(logger)
+        {
+        }
+
+        public override Task<bool> ValidateAsync(ValidationContext context)
+        {
+            return Task.FromResult(true);
+        }
+    }
+
+
+    public class ValidationB : ValidationBase
+    {
+        public ValidationB(ILogger<ValidationB> logger) : base(logger)
+        {
+        }
+
+        public override Task<bool> ValidateAsync(ValidationContext context)
+        {
+            throw new NotImplementedException();
+            return Task.FromResult(true);
+        }
+    }
+
 
     public static class MastercardValidationsExtensions
     {
@@ -44,31 +74,28 @@ namespace App
             return builder
             .Apply(async (context, next) =>
             {
-                Console.WriteLine("Iniciando validação");
-                await next();
-                Console.WriteLine("Validação concluida");
-            })
-            .Apply(async (context, next) =>
-            {
-                Console.WriteLine("one");
-                await next();
-            })
-            .Apply("validateMastercardCvc", async (context, next) =>
-            {
-                Console.WriteLine("validateMastercardCvc skip test");
-                await next();
-            })
-            .Apply(async (context, next) =>
-            {
-                Console.WriteLine("two");
+                var loggerFactory = context.Services.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger("ValidationEngine");
 
-                await next();
+                logger.LogInformation("Iniciando validação");
+
+                try
+                {
+                    await next();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Uma expcetion não tratada ocorreu.");
+                    context.SetError(EValidationError.UnhandledException);
+                }
+                finally
+                {
+                    logger.LogInformation("Validação concluida");
+                }
             })
-            .Apply(async (context, next) =>
-            {
-                Console.WriteLine("three");
-                await next();
-            }).Apply<ValidateInternationalTransaction>()
+            .Apply<ValidationA>()
+            .Apply<ValidationB>()
+            .Apply<ValidateInternationalTransaction>()
             .ApplyCvc();
         }
 

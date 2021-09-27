@@ -28,7 +28,8 @@ namespace App
 
         public List<string> SkipedValidations { get; set; } = new List<string>
         {
-            "validateMastercardCvc"
+            "validateMastercardCvc",
+            "ValidationA"
         };
 
         public Dictionary<string, string> Parameters { get; private set; }

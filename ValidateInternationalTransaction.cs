@@ -1,22 +1,27 @@
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
 namespace App
 {
-    public class ValidateInternationalTransaction : IValidation
+    public class ValidateInternationalTransaction : ValidationBase
     {
-        public async Task InvokeAsync(ValidationContext context, ValidationDelegate next)
+        public ValidateInternationalTransaction(ILogger<ValidateInternationalTransaction> logger) : base(logger)
         {
-            Console.WriteLine("Custom Validation logic from the separate class.");
+        }
 
+        public override Task<bool> ValidateAsync(ValidationContext context)
+        {
             var input = new InternationalTransactionInput
             {
                 OnlyDomestic = false,
+                AllowInternational = context.ParameterValueAs<bool>("AllowInternational")
+
             };
 
-            Validation.With(context).Validate(input);
+            logger.LogInformation("teste");
 
-            await next.Invoke(context);
+            return Task.FromResult(Validation.With(context).Validate(input));
         }
 
         internal class Validation
@@ -35,8 +40,7 @@ namespace App
 
             public bool Validate(InternationalTransactionInput input)
             {
-                var allowInternational = context.ParameterValueAs<bool>("AllowInternational");
-                if (!allowInternational)
+                if (!input.AllowInternational)
                 {
                     context.SetError(EValidationError.InternationalTransactionNotAllowedForThisCountry);
                     return false;
