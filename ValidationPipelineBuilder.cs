@@ -16,9 +16,11 @@ namespace App
 
         public ValidationDelegate Build()
         {
+            //Essa é o último middleware a ser executado,
+            //se chegar aqui significa que a transação foi
+            //autorizada
             ValidationDelegate validation = context =>
             {
-                //Significa que a transação foi autorizada
                 Console.WriteLine("Approved");
                 return Task.CompletedTask;
             };

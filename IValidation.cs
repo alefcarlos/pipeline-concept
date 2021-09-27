@@ -4,6 +4,6 @@ namespace App
 {
     public interface IValidation
     {
-        public Task InvokeAsync(TransactionContext context, ValidationDelegate next);
+        public Task InvokeAsync(ValidationContext context, ValidationDelegate next);
     }
 }

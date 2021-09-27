@@ -14,26 +14,17 @@ namespace App
 
             using var provider = services.BuildServiceProvider();
 
-            Console.WriteLine("Hello World!");
-
             var builder = new ValidationPipelineBuilder();
             builder = builder.ApplyMastercardValidations();
             var pipe = builder.Build();
 
-            var context = new TransactionContext
-            {
-                Cvc = "123",
-                Services = provider
-            };
 
-            pipe.Invoke(context);
-            Console.WriteLine(context.IsApproved);
+            var context = new ValidationContext(provider);
 
-            context = new TransactionContext
+            context.SetMessage(new IsoMessage
             {
-                Cvc = "321",
-                Services = provider
-            };
+                Cvc = "123"
+            });
 
             pipe.Invoke(context);
             Console.WriteLine(context.IsApproved);
@@ -51,6 +42,7 @@ namespace App
                 Console.WriteLine("Iniciando validação");
                 await next();
                 Console.WriteLine("Validação concluida");
+
             }).Apply(async (context, next) =>
             {
                 Console.WriteLine("one");
@@ -67,12 +59,31 @@ namespace App
             }).Apply<CustomValidation>()
             .ApplyCvc();
         }
+
+        public static ValidationPipelineBuilder ApplyCvc(this ValidationPipelineBuilder builder)
+        {
+            return builder.Apply(async (context, next) =>
+            {
+                if (context.Message.Cvc != "123")
+                {
+                    context.SetError(EValidationError.InvalidCvc);
+                    return;
+                }
+
+                await next();
+            });
+        }
     }
 
 
     public class CustomValidation : IValidation
     {
-        public async Task InvokeAsync(TransactionContext context, ValidationDelegate next)
+        public CustomValidation()
+        {
+            
+        }
+
+        public async Task InvokeAsync(ValidationContext context, ValidationDelegate next)
         {
             Console.WriteLine("Custom Validation logic from the separate class.");
 

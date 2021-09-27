@@ -2,5 +2,5 @@
 
 namespace App
 {
-    public delegate Task ValidationDelegate(TransactionContext context);
+    public delegate Task ValidationDelegate(ValidationContext context);
 }
