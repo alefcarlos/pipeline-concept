@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace App
@@ -10,7 +11,7 @@ namespace App
         {
             var services = new ServiceCollection();
             services.AddScoped<IValidationFactory, ValidationFactory>();
-            services.AddSingleton<CustomValidation>();
+            services.AddSingleton<ValidateInternationalTransaction>();
 
             using var provider = services.BuildServiceProvider();
 
@@ -20,6 +21,10 @@ namespace App
 
 
             var context = new ValidationContext(provider);
+
+            context.SetParameters(new Dictionary<string, string> {
+                {"AllowInternational", "false"}
+            });
 
             context.SetMessage(new IsoMessage
             {
@@ -64,7 +69,7 @@ namespace App
             {
                 Console.WriteLine("three");
                 await next();
-            }).Apply<CustomValidation>()
+            }).Apply<ValidateInternationalTransaction>()
             .ApplyCvc();
         }
 
@@ -84,18 +89,59 @@ namespace App
     }
 
 
-    public class CustomValidation : IValidation
+    public class InternationalTransactionInput
     {
-        public CustomValidation()
-        {
-            
-        }
+        public bool AllowInternational { get; set; }
+        public bool OnlyDomestic { get; set; }
+    }
 
+    public class ValidateInternationalTransaction : IValidation
+    {
         public async Task InvokeAsync(ValidationContext context, ValidationDelegate next)
         {
             Console.WriteLine("Custom Validation logic from the separate class.");
 
+            var input = new InternationalTransactionInput
+            {
+                OnlyDomestic = false,
+                AllowInternational = context.ParameterValueAs<bool>("AllowInternational")
+            };
+
+            Validation.New(context).Validate(input);
+
             await next.Invoke(context);
+        }
+
+        internal class Validation
+        {
+            private readonly ValidationContext context;
+
+            public static Validation New(ValidationContext context)
+            {
+                return new Validation(context);
+            }
+
+            private Validation(ValidationContext context)
+            {
+                this.context = context;
+            }
+
+            public bool Validate(InternationalTransactionInput input)
+            {
+                if (!input.AllowInternational)
+                {
+                    context.SetError(EValidationError.InternationalTransactionNotAllowedForThisCountry);
+                    return false;
+                }
+
+                if (input.OnlyDomestic)
+                {
+                    context.SetError(EValidationError.InternationalTransactionNotAllowedForDomesticCard);
+                    return false;
+                }
+
+                return true;
+            }
         }
     }
 }

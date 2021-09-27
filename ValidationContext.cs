@@ -30,5 +30,21 @@ namespace App
         {
             "validateMastercardCvc"
         };
+
+        public Dictionary<string, string> Parameters { get; private set; }
+
+        public void SetParameters(Dictionary<string, string> parameters){
+            Parameters = parameters;
+        }
+
+        public T ParameterValueAs<T>(string key)
+        {
+            var value = Parameters[key];
+
+            if (typeof(T).IsEnum)
+                return (T)Enum.Parse(typeof(T), value);
+
+            return (T)Convert.ChangeType(value, typeof(T));
+        }
     }
 }

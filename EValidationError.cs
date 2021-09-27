@@ -2,6 +2,8 @@
 {
     public enum EValidationError
     {
-        InvalidCvc
+        InvalidCvc,
+        InternationalTransactionNotAllowedForThisCountry,
+        InternationalTransactionNotAllowedForDomesticCard
     }
 }
