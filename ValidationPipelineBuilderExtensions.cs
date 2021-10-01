@@ -7,13 +7,13 @@ namespace App
 {
     public static class ValidationPipelineBuilderExtensions
     {
-        public static ValidationPipelineBuilder Apply(this ValidationPipelineBuilder builder, Func<ValidationContext, Func<Task>, Task> middleware)
+        public static ValidationPipelineBuilder Apply(this ValidationPipelineBuilder builder, Func<ValidationContext, Func<ValueTask>, ValueTask> middleware)
         {
             return builder.Apply(next =>
             {
                 return context =>
                 {
-                    Task simpleNext() => next(context);
+                    ValueTask simpleNext() => next(context);
                     return middleware(context, simpleNext);
                 };
             });
@@ -42,26 +42,6 @@ namespace App
                  }
              });
         }
-
-        //public static ValidationPipelineBuilder Apply(this ValidationPipelineBuilder builder, string validationName, Func<ValidationContext, Func<Task>, Task> middleware)
-        //{
-        //    return builder.Apply(next =>
-        //    {
-        //        return context =>
-        //        {
-        //            if (context.SkipedValidations.Contains(validationName))
-        //            {
-        //                Console.WriteLine("skiped " + validationName);
-        //                return next(context);
-        //            }
-        //            else
-        //            {
-        //                Task simpleNext() => next(context);
-        //                return middleware(context, simpleNext);
-        //            }
-        //        };
-        //    });
-        //}
 
         public static ValidationPipelineBuilder Apply<T>(this ValidationPipelineBuilder builder)
             where T : IValidation

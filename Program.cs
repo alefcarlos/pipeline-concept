@@ -8,7 +8,7 @@ namespace App
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var services = new ServiceCollection();
             services.AddScoped<IValidationFactory, ValidationFactory>();
@@ -36,7 +36,8 @@ namespace App
                 Cvc = "123"
             });
 
-            pipe.Invoke(context);
+            await pipe.Invoke(context);
+
             Console.WriteLine(context.IsApproved);
             Console.WriteLine(context.Error.ToString());
         }
@@ -48,9 +49,9 @@ namespace App
         {
         }
 
-        public override Task<bool> ValidateAsync(ValidationContext context)
+        public override ValueTask<bool> ValidateAsync(ValidationContext context)
         {
-            return Task.FromResult(true);
+            return new ValueTask<bool>(true);
         }
     }
 
@@ -61,7 +62,7 @@ namespace App
         {
         }
 
-        public override Task<bool> ValidateAsync(ValidationContext context)
+        public override ValueTask<bool> ValidateAsync(ValidationContext context)
         {
             throw new NotImplementedException();
         }

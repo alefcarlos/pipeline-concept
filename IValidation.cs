@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 
 namespace App
 {
     public interface IValidation
     {
-        Task InvokeAsync(ValidationContext context, ValidationDelegate next);
+        ValueTask InvokeAsync(ValidationContext context, ValidationDelegate next);
     }
 
     public abstract class ValidationBase : IValidation
@@ -25,7 +24,7 @@ namespace App
             return skip;
         }
 
-        public async Task InvokeAsync(ValidationContext context, ValidationDelegate next)
+        public async ValueTask InvokeAsync(ValidationContext context, ValidationDelegate next)
         {
             using (logger.BeginScope("Executando regra {ValidationName}", GetType().Name))
             {
@@ -42,6 +41,6 @@ namespace App
             await next.Invoke(context);
         }
 
-        public abstract Task<bool> ValidateAsync(ValidationContext context);
+        public abstract ValueTask<bool> ValidateAsync(ValidationContext context);
     }
 }

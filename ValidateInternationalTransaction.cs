@@ -10,7 +10,7 @@ namespace App
         {
         }
 
-        public override Task<bool> ValidateAsync(ValidationContext context)
+        public override ValueTask<bool> ValidateAsync(ValidationContext context)
         {
             var input = new InternationalTransactionInput
             {
@@ -21,7 +21,7 @@ namespace App
 
             logger.LogInformation("teste");
 
-            return Task.FromResult(Validation.With(context).Validate(input));
+            return new ValueTask<bool>(Validation.With(context).Validate(input));
         }
 
         internal class Validation

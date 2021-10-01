@@ -21,8 +21,7 @@ namespace App
             //autorizada
             ValidationDelegate validation = context =>
             {
-                Console.WriteLine("Approved");
-                return Task.CompletedTask;
+                return new ValueTask();
             };
 
             for (int c = _components.Count - 1; c >= 0; c--)
